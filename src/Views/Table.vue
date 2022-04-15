@@ -44,7 +44,7 @@
       <thead>
         <tr>
           <th @click="() => setSortedList('id')" v-on:click="setIdSort" >
-            Место {{ setFingerVision('id') }} {{this.sortDirection.login}}
+            Место {{ setFingerVision('id') }}
           </th>
           <th @click="() => setSortedLogin('login')" v-on:click="setLoginSort">
             Логин{{ setFingerVision('login') }}
@@ -159,7 +159,7 @@ export default {
       this.sortDirection[param] = !this.sortDirection[param];
     },
     setFingerVision(param) {
-      return this.sortDirection[param] ? '☝' : '👇';
+      return this.sortDirection[param] ? '☝🏻' : '👇';
     },
     setLoginUrl() {
       const data = Object.assign({}, this.$route.query);
