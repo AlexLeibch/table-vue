@@ -1,9 +1,9 @@
 <template>
   <div class="page">
     <div class="sort">
-      <label  for="search" class="sort__label"
+      <label for="search" class="sort__label"
         >Сортировать по логину<input
-          @change="clickOnVue"
+          @input="setLoginUrl"
           class="sort__input"
           v-model="searchQuery"
           type="text"
@@ -12,6 +12,7 @@
       /></label>
       <label for="status" class="sort__label"
         >Сортировать по статусу<input
+          @input="setStatusUrl"
           class="sort__input"
           v-model="searchStatus"
           type="text"
@@ -19,8 +20,9 @@
           placeholder="найти статус"
       /></label>
     </div>
-    <label  class="sort__num" for="num">
+    <label class="sort__num" for="num">
       Отфильтровать по количеству заказов от<input
+        @input="setMinValue"
         class="sort__input-number"
         v-model="firstRange"
         type="number"
@@ -29,6 +31,7 @@
       />
       до
       <input
+        @input="setMaxValue"
         v-model="lastRange"
         class="sort__input-number"
         type="number"
@@ -40,17 +43,17 @@
     <table>
       <thead>
         <tr>
-          <th @click="() => setSortedList('id')">
-            Место {{ setFingerVision("id") }}
+          <th @click="() => setSortedList('id')" v-on:click="setIdSort" >
+            Место {{ setFingerVision('id') }} {{this.sortDirection.login}}
           </th>
-          <th @click="() => setSortedLogin('login')" >
-            Логин{{ setFingerVision("login") }}
+          <th @click="() => setSortedLogin('login')" v-on:click="setLoginSort">
+            Логин{{ setFingerVision('login') }}
           </th>
-          <th @click="() => setSortedList('order')">
-            Подтвержденные заказы {{ setFingerVision("order") }}
+          <th @click="() => setSortedList('order')" v-on:click="setOrderSort">
+            Подтвержденные заказы {{ setFingerVision('order') }}
           </th>
-          <th @click="() => setSortedLogin('status')">
-            Статус {{ setFingerVision("status") }}
+          <th @click="() => setSortedLogin('status')" v-on:click="setStatusSort">
+            Статус {{ setFingerVision('status') }}
           </th>
         </tr>
       </thead>
@@ -70,10 +73,10 @@
 export default {
   data() {
     return {
-      searchQuery:'',
+      searchQuery: '',
       searchStatus: '',
-      firstRange:'0',
-      lastRange:'312',
+      firstRange: '0',
+      lastRange: '312',
       sortDirection: {
         login: false,
         id: false,
@@ -83,39 +86,39 @@ export default {
       data: [
         {
           id: 1,
-          login: "smith@gmail.com",
+          login: 'smith@gmail.com',
           order: 312,
-          status: "Ценитель красоты",
+          status: 'Ценитель красоты',
         },
         {
           id: 2,
-          login: "lenin@gmail.com",
+          login: 'lenin@gmail.com',
           order: 120,
-          status: "Поставщик аксессуаров",
+          status: 'Поставщик аксессуаров',
         },
         {
           id: 3,
-          login: "mask@gmail.com",
+          login: 'mask@gmail.com',
           order: 98,
-          status: "Конкурент минздрава",
+          status: 'Конкурент минздрава',
         },
         {
           id: 4,
-          login: "dog@mail.ru",
+          login: 'dog@mail.ru',
           order: 64,
-          status: "рыбак",
+          status: 'рыбак',
         },
         {
           id: 5,
-          login: "nightmare@mail.ru",
+          login: 'nightmare@mail.ru',
           order: 34,
-          status: "охотник",
+          status: 'охотник',
         },
         {
           id: 6,
-          login: "cat@mail.ru",
+          login: 'cat@mail.ru',
           order: 1,
-          status: "Ценитель красоты",
+          status: 'Ценитель красоты',
         },
       ],
     };
@@ -156,26 +159,63 @@ export default {
       this.sortDirection[param] = !this.sortDirection[param];
     },
     setFingerVision(param) {
-      return this.sortDirection[param] ? "☝" : "👇";
+      return this.sortDirection[param] ? '☝' : '👇';
     },
-    clickOnVue() {
-        this.$router.push({query: {login: '123'}})
-        console.log(this.$route.query)
+    setLoginUrl() {
+      const data = Object.assign({}, this.$route.query);
+      data['login'] = this.searchQuery;
+      this.$router.push({ query: data });
+    },
+    setStatusUrl() {
+      const data = Object.assign({}, this.$route.query);
+      data['status'] = this.searchStatus;
+      this.$router.push({ query: data });
+    },
+    setMinValue() {
+        const data = Object.assign({}, this.$route.query);
+      data['firstRange'] = this.firstRange;
+      this.$router.push({ query: data });
 
-    }
+    },
+     setMaxValue() {
+        const data = Object.assign({}, this.$route.query);
+      data['lastRange'] = this.lastRange;
+      this.$router.push({ query: data });
+    },
+    setIdSort() {
+        const data = Object.assign({}, this.$route.query);
+      data['directionId'] = this.sortDirection.id ;
+      this.$router.push({ query: data });
+    },
+    setLoginSort() {
+        const data = Object.assign({}, this.$route.query);
+
+      data['directionLogin'] = this.sortDirection.login ;
+      this.$router.push({ query: data });
+    },
+    setOrderSort() {
+        const data = Object.assign({}, this.$route.query);
+      data['directionOrder'] = this.sortDirection.order ;
+      this.$router.push({ query: data });
+    },
+    setStatusSort() {
+        const data = Object.assign({}, this.$route.query);
+      data['directionStatus'] = this.sortDirection.status ;
+      this.$router.push({ query: data });
+    },
   },
-//   created() {
-//         this.searchQuery = this.$route.query.login || '';
-//         this.searchStatus = this.$route.query.status || '';
-//         this.firstRange = this.$route.query.firstRange || '0';
-//         this.lastRange =  this.$route.query.lastRange || '312';
-//         this.sortDirection = {
-//         login: JSON.parse(this.$route.query.directionLogin || 'false'),
-//         id: JSON.parse(this.$route.query.directionId || 'false'),
-//         order: JSON.parse(this.$route.query.directionOrder || 'false'),
-//         status: JSON.parse(this.$route.query.directionStatus || 'false'),
-//       }
-//   },
+  created() {
+    this.searchQuery = this.$route.query.login || '';
+    this.searchStatus = this.$route.query.status || '';
+    this.firstRange = this.$route.query.firstRange || '0';
+    this.lastRange = this.$route.query.lastRange || '312';
+    this.sortDirection = {
+      login: JSON.parse(this.$route.query.directionLogin || 'false'),
+      id: JSON.parse(this.$route.query.directionId || 'false'),
+      order: JSON.parse(this.$route.query.directionOrder || 'false'),
+      status: JSON.parse(this.$route.query.directionStatus || 'false'),
+    };
+  },
 };
 </script>
 
