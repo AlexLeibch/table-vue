@@ -1,29 +1,38 @@
 <template>
-  <label for="search"
-    >Найти пользователя
-    <input
+  <div class="page">
+  <div class="sort">
+  <label for="search" class="sort__label"
+    >Сортировать по пользователю<input
+      class="sort__input"
       v-model="searchQuery"
       type="text"
       placeholder="найти логин"
       name="search"
+
   /></label>
   <label for="status"
-    ><input
+          class="sort__label"
+    >Сортировать по статусу<input
+    class="sort__input"
       v-model="searchStatus"
       type="text"
       name="status"
       placeholder="найти статус"
   /></label>
-  <label>
+  </div>
+  <label class="sort__num" for="num">
     Отфильтровать по количеству заказов от<input
+      class="sort__input-number"
       v-model="firstRange"
       type="number"
+      min="0"
+      name="mnum"
     />
     до
-    <input v-model="lastRange" type="number" />
+    <input v-model="lastRange" class="sort__input-number" type="number" max="325" name="mnum"/>
   </label>
 
-  <table border="1px" cellpadding="3px" rules="groups rows" align="center">
+  <table >
     <thead>
       <tr>
         <th @click="() => setSortedList('id')">
@@ -35,7 +44,7 @@
         <th @click="() => setSortedList('order')">
           Подтвержденные заказы {{ setFingerVision("order") }}
         </th>
-        <th @click="() => setSortedLogin('status')">
+        <th @click="() => setSortedLogin('status')" @change="() => setUrl()">
           Статус {{ setFingerVision("status") }}
         </th>
       </tr>
@@ -49,17 +58,18 @@
       </tr>
     </tbody>
   </table>
+  </div>
 </template>
 
 <script>
 export default {
   data() {
+
     return {
       searchQuery: "",
       searchStatus: "",
       firstRange: "0",
       lastRange: "312",
-      sortParam: "",
       sortDirection: {
         login: false,
         id: false,
@@ -138,6 +148,7 @@ export default {
         this.data.sort((a, b) => (a[param] > b[param] ? 1 : -1));
       } else {
         this.data.sort((a, b) => (a[param] < b[param] ? 1 : -1));
+
       }
       this.sortDirection[param] = !this.sortDirection[param];
     },
@@ -149,6 +160,8 @@ export default {
 </script>
 <style lang="scss">
 #app {
+  max-width: 1024px;
+  margin: 0 auto;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -169,6 +182,62 @@ nav {
   }
 }
 
+.page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.sort {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    grid-row-gap: 4px;
+    row-gap: 4px;
+
+    &__label {
+      width: 100%;
+    font-size: 16px;
+    line-height: 13px;
+      display: flex;
+    font-weight: 500;
+    padding-bottom: 8px;
+    align-items: center;
+  }
+
+  &__input {
+    border-radius: 5px;
+    outline: none;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 400;
+    font-size: inherit;
+    margin-left: 5px;
+
+  }
+
+  &__num {
+   width: 100%;
+    font-size: 16px;
+    line-height: 13px;
+    font-weight: 500;
+    padding-bottom: 8px;
+    align-items: center;
+    display: flex;
+  }
+
+  &__input-number {
+    outline: none;
+    width: 40px;
+    margin: 3px 5px 5px 5px;
+    border-radius: 5px;
+
+  }
+}
+
+
+
 $var1: #ffffff;
 $var2: #706d97;
 $var3: #696969;
@@ -181,6 +250,10 @@ th {
   &:last-child {
     text-align: right;
   }
+}
+
+tr th {
+  cursor: pointer;
 }
 td {
   min-width: 250px;
@@ -200,6 +273,7 @@ th,
 td {
   padding: 10px;
   height: 20px;
+  text-align: center;
 }
 tr:nth-child(odd) {
   background-color: $var4;
