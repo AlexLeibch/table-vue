@@ -1,15 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import App from '../App.vue'
+import Table from '../Views/Table.vue'
 
 const routes = [
-  { name: 'App', path: '/', component: App },
-    // other routes
-  // {
-  //   path: '/',
-  //   name: 'App',
-  //   component: App,
-  //   props: (route) => ({foo: route.query.foo})
-  // }
+  {
+    path: '/',
+    name: 'Table',
+    component: Table,
+  },
 ]
 
 const router = createRouter({
