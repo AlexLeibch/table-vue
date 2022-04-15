@@ -1,8 +1,9 @@
 <template>
   <div class="page">
     <div class="sort">
-      <label for="search" class="sort__label"
+      <label  for="search" class="sort__label"
         >Сортировать по логину<input
+          @change="clickOnVue"
           class="sort__input"
           v-model="searchQuery"
           type="text"
@@ -18,7 +19,7 @@
           placeholder="найти статус"
       /></label>
     </div>
-    <label class="sort__num" for="num">
+    <label  class="sort__num" for="num">
       Отфильтровать по количеству заказов от<input
         class="sort__input-number"
         v-model="firstRange"
@@ -42,14 +43,14 @@
           <th @click="() => setSortedList('id')">
             Место {{ setFingerVision("id") }}
           </th>
-          <th @click="() => setSortedLogin('login')">
+          <th @click="() => setSortedLogin('login')" >
             Логин{{ setFingerVision("login") }}
           </th>
           <th @click="() => setSortedList('order')">
             Подтвержденные заказы {{ setFingerVision("order") }}
           </th>
           <th @click="() => setSortedLogin('status')">
-            Статус  {{ setFingerVision("status") }}
+            Статус {{ setFingerVision("status") }}
           </th>
         </tr>
       </thead>
@@ -69,10 +70,10 @@
 export default {
   data() {
     return {
-      searchQuery: "",
-      searchStatus: "",
-      firstRange: "0",
-      lastRange: "312",
+      searchQuery:'',
+      searchStatus: '',
+      firstRange:'0',
+      lastRange:'312',
       sortDirection: {
         login: false,
         id: false,
@@ -157,7 +158,24 @@ export default {
     setFingerVision(param) {
       return this.sortDirection[param] ? "☝" : "👇";
     },
+    clickOnVue() {
+        this.$router.push({query: {login: '123'}})
+        console.log(this.$route.query)
+
+    }
   },
+//   created() {
+//         this.searchQuery = this.$route.query.login || '';
+//         this.searchStatus = this.$route.query.status || '';
+//         this.firstRange = this.$route.query.firstRange || '0';
+//         this.lastRange =  this.$route.query.lastRange || '312';
+//         this.sortDirection = {
+//         login: JSON.parse(this.$route.query.directionLogin || 'false'),
+//         id: JSON.parse(this.$route.query.directionId || 'false'),
+//         order: JSON.parse(this.$route.query.directionOrder || 'false'),
+//         status: JSON.parse(this.$route.query.directionStatus || 'false'),
+//       }
+//   },
 };
 </script>
 

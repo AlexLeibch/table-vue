@@ -6,7 +6,8 @@ const routes = [
     path: '/',
     name: 'Table',
     component: Table,
-  },
+    props: true,
+  }
 ]
 
 const router = createRouter({
