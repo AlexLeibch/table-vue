@@ -10,15 +10,23 @@
           placeholder="найти логин"
           name="search"
       /></label>
-      <label for="status" class="sort__label"
-        >Сортировать по статусу<input
-          @input="() => setUrlValue('status', 'searchStatus')"
-          class="sort__input"
-          v-model="searchStatus"
-          type="text"
+      <label class="sort__label" for="status"
+        >Сортировать по статусу
+        <select
           name="status"
-          placeholder="найти статус"
-      /></label>
+          class="sort__input"
+          @change="() => setUrlValue('status', 'selected')"
+          v-model="selected"
+        >
+          <option disabled value="">Выберите один из вариантов</option>
+          <option value="Ценитель красоты">Ценитель красоты</option>
+          <option value="Поставщик аксессуаров">Поставщик аксессуаров</option>
+          <option value="Конкурент минздрава">Конкурент минздрава</option>
+          <option value="рыбак">рыбак</option>
+          <option value="охотник">охотник</option>
+          <option value="Ценитель красоты">Ценитель красоты</option>
+        </select>
+      </label>
     </div>
     <label class="sort__num" for="num">
       Отфильтровать по количеству заказов от<input
@@ -44,36 +52,53 @@
       <thead>
         <tr>
           <th
-            @click="() => setSortedList('id')"
-            v-on:click="() => setSortDirection('directionId', 'id')"
+            @click="
+              () => {
+                setSortedList('id');
+                setSortDirection('directionId', 'id');
+              }
+            "
           >
             Место {{ setFingerVision("id") }}
           </th>
           <th
-             @click="() => setSortedList('login')" v-on:click="() => setSortDirection('directionLogin', 'login')"
+            @click="
+              () => {
+                setSortedList('login');
+                setSortDirection('directionLogin', 'login');
+              }
+            "
           >
             Логин{{ setFingerVision("login") }}
           </th>
           <th
-            @click="() => setSortedList('order')"
-            v-on:click="() => setSortDirection('directionOrder', 'order')"
+            @click="
+              () => {
+                setSortedList('order');
+                () => setSortDirection('directionOrder', 'order');
+              }
+            "
           >
             Подтвержденные заказы {{ setFingerVision("order") }}
           </th>
           <th
-            @click="() => setSortedList('status')"
-            v-on:click="() => setSortDirection('directionStatus', 'status')"
+            @click="
+              () => {
+                setSortedList('status');
+                setSortDirection('directionStatus', 'status');
+              }
+            "
           >
             Статус {{ setFingerVision("status") }}
           </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="info in setRangeOrder" :key="info.id">
+        <tr v-for="info in setSelectedStatus" :key="info.id">
           <td>{{ info.id }}</td>
-          <td @click="login">{{ info.login }}</td>
-          <td @click="order">{{ info.order }}</td>
-          <td @click="status">{{ info.status }}</td>
+          <td>{{ info.login }}</td>
+          <td>{{ info.order }}</td>
+          <td>{{ info.status }}</td>
         </tr>
       </tbody>
     </table>
@@ -88,6 +113,7 @@ export default {
       searchStatus: "",
       firstRange: "0",
       lastRange: "312",
+      selected: "",
       sortDirection: {
         login: false,
         id: false,
@@ -146,9 +172,25 @@ export default {
       );
     },
     setRangeOrder() {
-      return this.setSearchStatus.filter(
-        (info) => this.firstRange <= info.order && info.order <= this.lastRange
-      );
+      if (
+        (this.firstRange != "" && this.firstRange) ||
+        (this.lastRange != "" && this.lastRange)
+      ) {
+        return this.setSearchStatus.filter(
+          (info) =>
+            this.firstRange <= info.order && info.order <= this.lastRange
+        );
+      }
+      return this.setSearchStatus;
+    },
+
+    setSelectedStatus() {
+      if (this.setRangeOrder) {
+        return this.setRangeOrder.filter((info) =>
+          info.status.includes(this.selected)
+        );
+      }
+      return this.setRangeOrder;
     },
   },
   methods: {
@@ -169,6 +211,9 @@ export default {
     setUrlValue(key, param) {
       const data = Object.assign({}, this.$route.query);
       data[key] = this[param];
+      if (this[param] === '') {
+        delete data[key];
+      }
       this.$router.push({ query: data });
     },
     setSortDirection(key, param) {
@@ -177,11 +222,12 @@ export default {
       this.$router.push({ query: data });
     },
   },
+ 
   created() {
     this.searchQuery = this.$route.query.login || "";
-    this.searchStatus = this.$route.query.status || "";
+    this.selected = this.$route.query.status || "";
     this.firstRange = this.$route.query.firstRange || "0";
-    this.lastRange = this.$route.query.lastRange || "312";
+    this.lastRange = this.$route.query.lastRange || "325";
     this.sortDirection = {
       login: JSON.parse(this.$route.query.directionLogin || "false"),
       id: JSON.parse(this.$route.query.directionId || "false"),
@@ -209,7 +255,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  grid-row-gap: 4px;
   row-gap: 4px;
 
   &__label {
