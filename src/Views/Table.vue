@@ -10,17 +10,14 @@
           placeholder="найти логин"
           name="search"
       /></label>
-      <label for="status" class="sort__label"
-        >Сортировать по статусу<input
-          @input="() => setUrlValue('status', 'selected')"
-          class="sort__input"
-          v-model="searchStatus"
-          type="text"
+      <label class="sort__label" for="status"
+        >Сортировать по статусу
+        <select
           name="status"
-          placeholder="найти статус"
-      /></label>
-      <label>Сортировать по статусу {{selected}}
-        <select @click="() => setUrlValue('selected','selected')" v-model="selected">
+          class="sort__input"
+          @click="() => setUrlValue('status', 'selected')"
+          v-model="selected"
+        >
           <option disabled value="">Выберите один из вариантов</option>
           <option value="Ценитель красоты">Ценитель красоты</option>
           <option value="Поставщик аксессуаров">Поставщик аксессуаров</option>
@@ -55,22 +52,42 @@
       <thead>
         <tr>
           <th
-            @click="() => {setSortedList('id'); setSortDirection('directionId', 'id')}"
+            @click="
+              () => {
+                setSortedList('id');
+                setSortDirection('directionId', 'id');
+              }
+            "
           >
             Место {{ setFingerVision("id") }}
           </th>
           <th
-             @click="() => {setSortedList('login'); setSortDirection('directionLogin', 'login')}"
+            @click="
+              () => {
+                setSortedList('login');
+                setSortDirection('directionLogin', 'login');
+              }
+            "
           >
             Логин{{ setFingerVision("login") }}
           </th>
           <th
-            @click="() => {setSortedList('order'); () => setSortDirection('directionOrder', 'order')}"
+            @click="
+              () => {
+                setSortedList('order');
+                () => setSortDirection('directionOrder', 'order');
+              }
+            "
           >
             Подтвержденные заказы {{ setFingerVision("order") }}
           </th>
           <th
-            @click="() => {setSortedList('status'); setSortDirection('directionStatus', 'status')}"
+            @click="
+              () => {
+                setSortedList('status');
+                setSortDirection('directionStatus', 'status');
+              }
+            "
           >
             Статус {{ setFingerVision("status") }}
           </th>
@@ -155,21 +172,26 @@ export default {
       );
     },
     setRangeOrder() {
-      if((this.firstRange !='' && this.firstRange) || (this.lastRange != '' && this.lastRange)) {
-      return this.setSearchStatus.filter(
-        (info) => this.firstRange <= info.order && info.order <= this.lastRange
-      );
+      if (
+        (this.firstRange != "" && this.firstRange) ||
+        (this.lastRange != "" && this.lastRange)
+      ) {
+        return this.setSearchStatus.filter(
+          (info) =>
+            this.firstRange <= info.order && info.order <= this.lastRange
+        );
       }
-      return this.setSearchStatus
+      return this.setSearchStatus;
     },
 
     setSelectedStatus() {
       if (this.setRangeOrder) {
-        return this.setRangeOrder.filter((info) => info.status.includes(this.selected))
+        return this.setRangeOrder.filter((info) =>
+          info.status.includes(this.selected)
+        );
       }
-      return this.setRangeOrder
-    }
-
+      return this.setRangeOrder;
+    },
   },
   methods: {
     setSortedList(param) {
@@ -196,13 +218,34 @@ export default {
       data[key] = this.sortDirection[param];
       this.$router.push({ query: data });
     },
-
   },
   created() {
-    this.searchQuery = this.$route.query.login || "";
+    let query = Object.assign({}, this.$route.query);
+    if (query.login != "") {
+      this.searchQuery = this.$route.query.login || "";
+    } else {
+      delete query.login;
+      this.$router.replace({
+        query: query,
+      });
+    }
     this.selected = this.$route.query.status || "";
-    this.firstRange = this.$route.query.firstRange || "0";
-    this.lastRange = this.$route.query.lastRange || "325";
+    if (query.firstRange != "") {
+      this.firstRange = this.$route.query.firstRange || "0";
+    } else {
+      delete query.firstRange;
+      this.$router.replace({
+        query: query,
+      });
+    }
+        if (query.lastRange != "") {
+      this.lastRange = this.$route.query.lastRange || "325";
+    } else {
+      delete query.lastRange;
+      this.$router.replace({
+        query: query,
+      });
+    }
     this.sortDirection = {
       login: JSON.parse(this.$route.query.directionLogin || "false"),
       id: JSON.parse(this.$route.query.directionId || "false"),
