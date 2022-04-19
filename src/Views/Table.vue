@@ -15,7 +15,7 @@
         <select
           name="status"
           class="sort__input"
-          @click="() => setUrlValue('status', 'selected')"
+          @change="() => setUrlValue('status', 'selected')"
           v-model="selected"
         >
           <option disabled value="">Выберите один из вариантов</option>
@@ -211,6 +211,9 @@ export default {
     setUrlValue(key, param) {
       const data = Object.assign({}, this.$route.query);
       data[key] = this[param];
+      if (this[param] === '') {
+        delete data[key];
+      }
       this.$router.push({ query: data });
     },
     setSortDirection(key, param) {
@@ -219,34 +222,7 @@ export default {
       this.$router.push({ query: data });
     },
   },
-  updated() {
-    let query = Object.assign({}, this.$route.query);
-
-    this.$watch(
-      () => this.searchQuery === "",
-      () => {
-          delete query.login;
-          this.$router.replace({ query });
-        console.log(this.$route.query);
-
-      }
-    );
-
-    this.$watch(
-      () => this.firstRange === this.$route.query.searchQuery,
-      () => {
-          delete query.firstRange;
-          this.$router.replace({ query });
-      }
-    );
-    this.$watch(
-      () => this.lastRange === "",
-      () => {
-          delete query.lastRange;
-          this.$router.replace({ query });
-      }
-    );
-  },
+ 
   created() {
     this.searchQuery = this.$route.query.login || "";
     this.selected = this.$route.query.status || "";
