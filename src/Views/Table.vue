@@ -219,33 +219,39 @@ export default {
       this.$router.push({ query: data });
     },
   },
-  created() {
+  updated() {
     let query = Object.assign({}, this.$route.query);
-    if (query.login != "") {
-      this.searchQuery = this.$route.query.login || "";
-    } else {
-      delete query.login;
-      this.$router.replace({
-        query: query,
-      });
-    }
+
+    this.$watch(
+      () => this.searchQuery === "",
+      () => {
+          delete query.login;
+          this.$router.replace({ query });
+        console.log(this.$route.query);
+
+      }
+    );
+
+    this.$watch(
+      () => this.firstRange === this.$route.query.searchQuery,
+      () => {
+          delete query.firstRange;
+          this.$router.replace({ query });
+      }
+    );
+    this.$watch(
+      () => this.lastRange === "",
+      () => {
+          delete query.lastRange;
+          this.$router.replace({ query });
+      }
+    );
+  },
+  created() {
+    this.searchQuery = this.$route.query.login || "";
     this.selected = this.$route.query.status || "";
-    if (query.firstRange != "") {
-      this.firstRange = this.$route.query.firstRange || "0";
-    } else {
-      delete query.firstRange;
-      this.$router.replace({
-        query: query,
-      });
-    }
-        if (query.lastRange != "") {
-      this.lastRange = this.$route.query.lastRange || "325";
-    } else {
-      delete query.lastRange;
-      this.$router.replace({
-        query: query,
-      });
-    }
+    this.firstRange = this.$route.query.firstRange || "0";
+    this.lastRange = this.$route.query.lastRange || "325";
     this.sortDirection = {
       login: JSON.parse(this.$route.query.directionLogin || "false"),
       id: JSON.parse(this.$route.query.directionId || "false"),
