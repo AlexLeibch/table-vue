@@ -3,14 +3,6 @@
 </template>
 
 <script>
-import Table from "@/Views/Table.vue";
-
-export default {
-  name: "Table",
-  components: {
-    Table,
-  },
-};
 </script>
 
 <style lang="scss">
